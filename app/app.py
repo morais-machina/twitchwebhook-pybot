@@ -1,9 +1,9 @@
 import os
-from twitchAPI.twitch import Twitch
-from twitchAPI.webhook import TwitchWebHook
 from pprint import pprint
 
 from flask import Flask
+from twitchAPI.twitch import Twitch
+from twitchAPI.webhook import TwitchWebHook
 
 app = Flask(__name__)
 
