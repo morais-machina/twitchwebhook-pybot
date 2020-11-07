@@ -1,5 +1,5 @@
+import logging
 import os
-from pprint import pprint
 
 from flask import Flask
 from twitchAPI.twitch import Twitch
@@ -10,12 +10,13 @@ app = Flask(__name__)
 
 @app.route("/health")
 def health():
+    logging.warn("Hey, we have Flask in a Docker container!")
     return "Hey, we have Flask in a Docker container!"
 
 
-def callback_stream_changed(uuid, data):
-    print("Callback for UUID " + str(uuid))
-    pprint(data)
+def callback_user_changed(uuid, data):
+    logging.warn("Callback for UUID " + str(uuid))
+    logging.warn(data)
 
 
 if __name__ == "__main__":
@@ -32,15 +33,15 @@ if __name__ == "__main__":
 
     user_info = twitch.get_users(logins=[username])
     user_id = user_info["data"][0]["id"]
-    
+
     # basic setup
     hook = TwitchWebHook(callback_url, client_id, 5000)
     hook.authenticate(twitch)
     hook.start()
 
-    print("subscribing to hook:")
-    success, uuid = hook.subscribe_stream_changed(user_id, callback_stream_changed)
-    pprint(success)
+    logging.info("subscribing to user-changed:")
+    success, uuid = hook.subscribe_user_changed(user_id, callback_user_changed)
+    logging.info(success)
 
     # Only uncomment this if running locally
     # app.run(debug=debug, host="0.0.0.0", port=5000)
